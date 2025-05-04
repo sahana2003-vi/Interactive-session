@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management Dashboard</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Flash Message Styles */
+        .flash-container {
+            margin-bottom: 20px;
+        }
+
+        .flash {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .flash li {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .flash .error {
+            background-color: #f44336;
+        }
+
+        .flash .success {
+            background-color: #4CAF50;
+        }
+
+        /* Dashboard Links */
+        .dashboard-options {
+            margin-bottom: 20px;
+        }
+
+        .dashboard-options h2 {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .dashboard-options ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .dashboard-options li {
+            margin-bottom: 15px;
+        }
+
+        .dashboard-link {
+            font-size: 1.2rem;
+            color: #007BFF;
+            text-decoration: none;
+            padding: 10px;
+            display: inline-block;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .dashboard-link:hover {
+            background-color: #007BFF;
+            color: #fff;
+        }
+
+        /* Data Section */
+        .data-section h2 {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .data-item {
+            font-size: 1.1rem;
+            color: #555;
+            padding: 8px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .data-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>User Management Dashboard</h1>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-container">
+              <ul class="flash">
+                {% for category, message in messages %}
+                  <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <div class="dashboard-options">
+            <h2>Manage Users and Groups</h2>
+            <ul>
+                <li><a class="dashboard-link" href="{{ url_for('add_account') }}">Add Account</a></li>
+                <li><a class="dashboard-link" href="{{ url_for('add_user_to_account') }}">Add User to Account</a></li>
+                <li><a class="dashboard-link" href="{{ url_for('add_user_with_new_account') }}">Add User with New Account</a></li>
+                <li><a class="dashboard-link" href="{{ url_for('add_group') }}">Add Group</a></li>
+                <li><a class="dashboard-link" href="{{ url_for('add_user_to_group') }}">Add User to Group</a></li>
+            </ul>
+        </div>
+
+        <section class="data-section">
+            <h2>Accounts</h2>
+            <ul>
+                {% for account in accounts %}
+                    <li class="data-item">{{ account.name }}{% if account.users %} - Users: {{ account.users | join(', ') }}{% endif %}</li>
+                {% endfor %}
+            </ul>
+
+            <h2>Groups</h2>
+            <ul>
+                {% for group in groups %}
+                    <li class="data-item">{{ group.name }}{% if group.users %} - Users: {{ group.users | join(', ') }}{% endif %}</li>
+                {% endfor %}
+            </ul>
+        </section>
+    </div>
+</body>
+</html>

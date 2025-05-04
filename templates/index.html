@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Management - Login/Register</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .hidden { display: none; }
+        .form-toggle button { margin: 0 5px; }
+        .form { margin-top: 20px; }
+        .flash { color: red; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>User Management</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <ul class="flash">
+              {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+
+        <div class="form-toggle">
+            <button onclick="toggleForm('login')">Login</button>
+            <button onclick="toggleForm('register')">Register</button>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="form" method="POST" onsubmit="handleLogin(event)">
+            <h2>Login</h2>
+            <input type="email" name="email" placeholder="Email" required id="loginEmail">
+            <input type="password" name="password" placeholder="Password" required id="loginPassword">
+            <button type="submit">Login</button>
+        </form>
+
+        <!-- Register Form -->
+        <form id="registerForm" class="form hidden" method="POST" onsubmit="handleRegister(event)">
+            <h2>Register</h2>
+            <input type="text" name="username" placeholder="Username" required id="registerUsername">
+            <input type="email" name="email" placeholder="Email" required id="registerEmail">
+            <input type="password" name="password" placeholder="Password" required id="registerPassword">
+            <button type="submit">Register</button>
+        </form>
+    </div>
+
+    <script>
+        function toggleForm(formType) {
+            document.getElementById('loginForm').classList.toggle('hidden', formType !== 'login');
+            document.getElementById('registerForm').classList.toggle('hidden', formType !== 'register');
+        }
+
+        // Handle login form submission
+        async function handleLogin(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const response = await fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Redirect to dashboard or another page
+                window.location.href = '/dashboard';
+            } else {
+                alert('Login failed: ' + data.message);
+            }
+        }
+
+        // Handle register form submission
+        async function handleRegister(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const username = document.getElementById('registerUsername').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+
+            const response = await fetch('/api/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, email, password }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert('Registration successful!');
+                toggleForm('login'); // Switch to login form
+            } else {
+                alert('Registration failed: ' + data.message);
+            }
+        }
+    </script>
+</body>
+</html>
